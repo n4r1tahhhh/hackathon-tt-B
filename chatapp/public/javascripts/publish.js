@@ -8,11 +8,17 @@ function publish() {
     var message = $('#message').val();
     $('#message').val('');
 
-    // 時間をメッセージに追加
-    message = getDate() + '\n' + message;
+    if (/\S/.test(message)) {
+        // 時間をメッセージに追加
+        message = getDate() + '\n' + message;
 
-    // 投稿内容を送信
-    sendMessage({message: message, userName: userName});
+        // 投稿内容を送信
+        sendMessage({message: message, userName: userName});
+    }
+    else {
+        alert('メッセージを入力してください');
+    }
+
     return false;
 }
 
