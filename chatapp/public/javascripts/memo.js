@@ -7,12 +7,13 @@ function memo() {
 
     // 入力されたメッセージを取得
     var message = $('#message').val();
-
-    // 時間をメッセージに追加
-    message = userName + 'さんのメモ : ' + getDate() + '\n' + message;
+    $('#message').val('');
 
     // スペースや改行などの見えない文字以外があるか 
     if (/\S/.test(message)) {
+        // 時間をメッセージに追加
+        message = userName + 'さんのメモ : ' + getDate() + '\n' + message;
+
         // 改行を正しく表示
         $('#thread').prepend('<pre>' + message + '</pre>');
     } else {
