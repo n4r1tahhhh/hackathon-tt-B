@@ -1,11 +1,13 @@
 'use strict';
 
+// 入力されたユーザ名を取得する
+const userName = $('#userName').val();
+
 // 入室メッセージをサーバに送信する
 function entry() {
     socket.emit('enterMyselfEvent', userName);
 }
-// 入力されたユーザ名を取得する
-const userName = '';
+
 // 入室メッセージイベントを送信する
 entry();
 
