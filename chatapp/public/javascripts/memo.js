@@ -3,7 +3,7 @@
 // メモを画面上に表示する
 function memo() {
     // ユーザ名を取得
-    const userName = $('#userName').val();;
+    const userName = $('#userName').val();
 
     // 入力されたメッセージを取得
     var message = $('#message').val();
@@ -18,10 +18,10 @@ function memo() {
 
         // メモの内容を表示
         for (var i = 0; i < lines.length; i++) {
-            $('#thread').prepend('<p>' + lines[i] + '</p>');
+            $('#thread').prepend('<pre>' + lines[i] + '</pre>');
         }
-    } 
-    else {
+
+    } else {
         alert('メモを入力してください！');
     }
 

@@ -11,10 +11,10 @@ entry();
 
 // サーバから受信した入室メッセージを画面上に表示する (自クライアント用)
 socket.on('enterMyselfEvent', function (data) {
-    $('#thread').prepend('<p>' + data + 'さんが入室しました。' + '</p>');
+    $('#thread').prepend('<pre>' + data + 'さんが入室しました。' + '</pre>');
 });
 
 // サーバから受信した入室メッセージを画面上に表示する (他のクライアント用)
 socket.on('enterOtherEvent', function (data) {
-    $('#thread').prepend('<p>' + data + 'さんが入室しました。' + '</p>');
+    $('#thread').prepend('<pre>' + data + 'さんが入室しました。' + '</pre>');
 });
