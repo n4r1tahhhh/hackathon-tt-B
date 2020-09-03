@@ -6,8 +6,11 @@ function memo() {
     const userName = $('#userName').val();;
 
     // 入力されたメッセージを取得
-    const message = $('#message').val();
+    var message = $('#message').val();
     
+    // 時間をメッセージに追加
+    message = getDate() + ' | ' + message;
+
     // スペースや改行などの見えない文字以外があるか 
     if(/\S/.test(message)) {
         // 正しく改行して表示
