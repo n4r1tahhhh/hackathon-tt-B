@@ -6,9 +6,10 @@ function publish() {
     const userName = $('#userName').val();
     // 入力されたメッセージを取得
     var message = $('#message').val();
+    $('#message').val('');
 
     // 時間をメッセージに追加
-    message = getDate() + ' | ' + message;
+    message = getDate() + '\n' + message;
 
     // 投稿内容を送信
     sendMessage({message: message, userName: userName});
@@ -27,7 +28,7 @@ function sendMessage(message) {
 
 // サーバから受信した投稿メッセージを画面上に表示する
 socket.on('recieveMessageEvent', function (data) {
-    $('#thread').prepend('<p>' + data.userName + "：" + data.message + '</p>');
+    $('#thread').prepend('<pre>' + data.userName + 'さん : ' + data.message + '</pre>');
     console.log(data);
 });
 
