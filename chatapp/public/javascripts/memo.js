@@ -7,20 +7,14 @@ function memo() {
 
     // 入力されたメッセージを取得
     var message = $('#message').val();
-    
+
     // 時間をメッセージに追加
-    message = getDate() + ' | ' + message;
+    message = userName + 'さんのメモ : ' + getDate() + '\n' + message;
 
     // スペースや改行などの見えない文字以外があるか 
-    if(/\S/.test(message)) {
-        // 正しく改行して表示
-        const lines = message.split(/\n/); 
-
-        // メモの内容を表示
-        for (var i = 0; i < lines.length; i++) {
-            $('#thread').prepend('<pre>' + lines[i] + '</pre>');
-        }
-
+    if (/\S/.test(message)) {
+        // 改行を正しく表示
+        $('#thread').prepend('<pre>' + message + '</pre>');
     } else {
         alert('メモを入力してください！');
     }
