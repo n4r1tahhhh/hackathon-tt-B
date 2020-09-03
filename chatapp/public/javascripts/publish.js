@@ -7,7 +7,7 @@ function publish() {
     // 入力されたメッセージを取得
     const message = $('#message').val();
     // 投稿内容を送信
-    sendMessage(message)
+    sendMessage({message: message, userName: userName});
     return false;
 }
 
@@ -17,11 +17,12 @@ function sendMessage(message) {
         //'このメッセージはすべてのクライアントに送信されます。');
 
     // メッセージ入力イベント（sendMessageEvent）を送信する
-    socket.emit('sendMessageEvent', message);
+    socket.emit('sendMessageEvent', {message_data: message, userName_data: userName});
 
 }
 
 // サーバから受信した投稿メッセージを画面上に表示する
 socket.on('recieveMessageEvent', function (data) {
-    $('#thread').prepend('<p>' + data + '</p>');
+    $('#thread').prepend('<p>' + data.message + "：" + data.userName + '</p>');
+    console.log(data);
 });
