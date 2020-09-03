@@ -17,13 +17,13 @@ function sendMessage(message) {
         //'このメッセージはすべてのクライアントに送信されます。');
 
     // メッセージ入力イベント（sendMessageEvent）を送信する
-    socket.emit('sendMessageEvent', {message_data: message, userName_data: userName});
+    socket.emit('sendMessageEvent', message);
 
 }
 
 // サーバから受信した投稿メッセージを画面上に表示する
 socket.on('recieveMessageEvent', function (data) {
-    $('#thread').prepend('<p>' + data.message + "：" + data.userName + '</p>');
+    $('#thread').prepend('<p>' + data.userName + "：" + data.message + '</p>');
     console.log(data);
 });
 
