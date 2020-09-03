@@ -32,7 +32,13 @@ function sendMessage(message) {
 
 }
 
-// サーバから受信した投稿メッセージを画面上に表示する
+// サーバから受信した投稿メッセージを画面上に表示する (自分のメッセージ)
+socket.on('recieveMyMessageEvent', function (data) {
+    $('#thread').prepend('<pre class="text-success">' + data.userName + 'さん : ' + data.message + '</pre>');
+    console.log(data);
+});
+
+// サーバから受信した投稿メッセージを画面上に表示する (他の人のメッセージ)
 socket.on('recieveMessageEvent', function (data) {
     $('#thread').prepend('<pre>' + data.userName + 'さん : ' + data.message + '</pre>');
     console.log(data);

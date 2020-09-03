@@ -7,6 +7,7 @@ module.exports = function (socket, io) {
             return
         }
         // 全クライアントが受信するメッセージ表示イベント（receiveMessageEvent）を送信する
-        io.sockets.emit('recieveMessageEvent', data);
+        socket.broadcast.emit('recieveMessageEvent', data);
+        socket.emit('recieveMyMessageEvent', data);
     });
 };
