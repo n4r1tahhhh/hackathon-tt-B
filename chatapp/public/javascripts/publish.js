@@ -5,7 +5,11 @@ function publish() {
     // ユーザ名を取得
     const userName = $('#userName').val();
     // 入力されたメッセージを取得
-    const message = $('#message').val();
+    var message = $('#message').val();
+
+    // 時間をメッセージに追加
+    message = getDate() + ' | ' + message;
+
     // 投稿内容を送信
     sendMessage({message: message, userName: userName});
     return false;
