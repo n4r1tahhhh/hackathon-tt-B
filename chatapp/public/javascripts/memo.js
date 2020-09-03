@@ -7,7 +7,8 @@ function memo() {
 
     // 入力されたメッセージを取得
     var message = $('#message').val();
-    
+    $('#message').val('');
+
     // 時間をメッセージに追加
     message = userName + 'さんのメモ : ' + getDate() + '\n' + message;
 
