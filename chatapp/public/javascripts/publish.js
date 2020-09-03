@@ -25,3 +25,15 @@ function sendMessage(message) {
 socket.on('recieveMessageEvent', function (data) {
     $('#thread').prepend('<pre>' + data + '</pre>');
 });
+
+var $ta = $("#message");
+
+$(document).on("keypress", $ta, function(e) {
+    // shift + Enterが押された
+    if (e.shiftKey && e.keyCode == 13) { 
+        // 改行の入力を中断
+        e.preventDefault();
+        // 投稿
+        publish($ta);
+    }
+});
