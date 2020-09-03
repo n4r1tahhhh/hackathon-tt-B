@@ -8,18 +8,10 @@ function memo() {
     // 入力されたメッセージを取得
     const message = $('#message').val();
     
-    // スペースや改行などの見えない文字以外があるか 
-    if(/\S/.test(message)) {
-        // 正しく改行して表示
-        const lines = message.split(/\n/); 
-
-        // メモの内容を表示
-        for (var i = 0; i < lines.length; i++) {
-            $('#thread').prepend('<p>' + lines[i] + '</p>');
-        }
-    } 
-    else {
+    if(message == ""){
         alert('メモを入力してください！');
+    }else{
+        $('#thread').prepend('<pre>' + message + '</pre>');
     }
 
     return false;
