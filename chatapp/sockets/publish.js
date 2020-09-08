@@ -1,5 +1,7 @@
 'use strict';
 
+let xssFilters = require('xss-filters');
+
 module.exports = function (socket, io) {
     // 投稿メッセージを送信する
     socket.on('sendMessageEvent', function (data) {
@@ -9,6 +11,8 @@ module.exports = function (socket, io) {
 
         // 投稿に一意のidを付与する
         data["id"] = getUniqueStr();
+        // メッセージのタグを無効化（XSS脆弱性の対策）
+        data["message"] = xssFilters.inHTMLData(data["message"]);
 
         socket.broadcast.emit('recieveMessageEvent', data);
         socket.emit('recieveMyMessageEvent', data);
