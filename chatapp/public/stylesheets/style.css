@@ -81,3 +81,18 @@ div {
 .room-exit_button {
 
 }
+
+#contextmenu{
+    display: none;
+    position: fixed;
+    left: 0px;
+    top: 0px;
+    width: 200px;
+    height: 20px;
+    border: 1px solid #000;
+    background-color: #fff;
+}
+
+#contextmenu li{
+    cursor: pointer;
+}

@@ -15,7 +15,7 @@
                 <input type="button" value="投稿" class="common-button room-publish_button" onclick="publish();">
                 <input type="button" value="メモ" class="common-button room-memo_button" onclick="memo();">
             </div>
-            <div class="room-thread">
+            <div class="room-thread" onContextmenu="return false;">
                 <div id="thread"></div>
             </div>
             <div class="room-exit">
@@ -23,6 +23,11 @@
             </div>
         </form>
     </div>
+</div>
+<div id="contextmenu">
+    <ul>
+        <li id="remove-message" onClick="removeMessage('');">投稿を取り消す</li>
+    </ul>
 </div>
 
 <script src="/javascripts/socket.js"></script>

@@ -6,8 +6,24 @@ module.exports = function (socket, io) {
         if (!data) {
             return
         }
-        // 全クライアントが受信するメッセージ表示イベント（receiveMessageEvent）を送信する
+
+        // 投稿に一意のidを付与する
+        data["id"] = getUniqueStr();
+
         socket.broadcast.emit('recieveMessageEvent', data);
         socket.emit('recieveMyMessageEvent', data);
     });
+    // 投稿メッセージを取り消す
+    socket.on('removeMessageEvent', function (messageId) {
+        if (!messageId) {
+            return
+        }
+        socket.broadcast.emit('removeMessageEvent', messageId);
+        socket.emit('removeMyMessageEvent', messageId);
+    });
 };
+
+// 一意の文字列取得
+function getUniqueStr(){
+    return new Date().getTime().toString(16) + Math.floor(Math.random()).toString(16);
+}
