@@ -34,14 +34,14 @@ function removeMessage(messageId) {
 
 // サーバから受信した投稿メッセージを画面上に表示する (自分のメッセージ)
 socket.on('recieveMyMessageEvent', function (data) {
-    $('#thread').prepend('<li class="list-group-item"><pre class="text-success" id=' + data.id + '>' + data.userName + 'さん : ' + data.date + '\n' + data.message + '</pre></li>');
+    $('#thread').prepend('<pre class="text-success" id=' + data.id + '>' + data.userName + 'さん : ' + data.date + '\n' + data.message + '</pre>');
     setContextMenuEvent(data.id);
     console.log(data);
 });
 
 // サーバから受信した投稿メッセージを画面上に表示する (他の人のメッセージ)
 socket.on('recieveMessageEvent', function (data) {
-    $('#thread').prepend('<li class="list-group-item"><pre id=' + data.id + '>' + data.userName + 'さん : ' + data.date + '\n' + data.message + '</pre> </li>');
+    $('#thread').prepend('<pre id=' + data.id + '>' + data.userName + 'さん : ' + data.date + '\n' + data.message + '</pre>');
     console.log(data);
 });
 
