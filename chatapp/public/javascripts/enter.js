@@ -1,15 +1,18 @@
 'use strict';
 
 // 入力されたユーザ名を取得する
-const userName = $('#userName').val();
+var userName = $('#userName').val();
 
-// 入室メッセージをサーバに送信する
-function entry() {
-    socket.emit('enterMyselfEvent', userName);
+if (/\S/.test(userName)) {
+    // 入室メッセージをサーバに送信する
+    function entry() {
+        socket.emit('enterMyselfEvent', userName);
+    }
+    // 入室メッセージイベントを送信する
+    entry();
 }
 
-// 入室メッセージイベントを送信する
-entry();
+
 
 // サーバから受信した入室メッセージを画面上に表示する (自クライアント用)
 socket.on('enterMyselfEvent', function (data) {

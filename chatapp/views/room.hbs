@@ -1,28 +1,40 @@
 <div class="container">
-    <div class="row">
+    <div id='top_container'>
         <h1>Node Chat チャットルーム</h1>
+        <div class="room-login_user">
+            ログインユーザ：{{userName}}さん
+            <input id="userName" type="hidden" value="{{userName}}">
+        </div>
     </div>
-    <div class="row">
-        <form method="post" action="/">
-            <div class="room-login_user">
-                ログインユーザ：{{userName}}さん
-                <input id="userName" type="hidden" value="{{userName}}">
-            </div>
-            <div class="room-message">
-                <textarea id="message" rows="4" class="room-message_textarea" placeholder="投稿文を入力してください"></textarea>
-            </div>
-            <div class="room-submit">
-                <input type="button" value="投稿" class="common-button room-publish_button" onclick="publish();">
-                <input type="button" value="メモ" class="common-button room-memo_button" onclick="memo();">
-            </div>
-            <div class="room-thread" onContextmenu="return false;">
-                <div id="thread"></div>
-            </div>
-            <div class="room-exit">
-                <input type="button" value="退室する" class="common-button room-exit_button" onclick="exit();">
-            </div>
-        </form>
+
+    <div id='chat_container'>
+        <div class="row">
+            <form method="post" action="/">
+                <div class="room-message">
+                    <textarea id="message" rows="4" class="room-message_textarea" placeholder="投稿文を入力してください"></textarea>
+                </div>
+                <div class="room-submit">
+                    <input type="button" value="投稿" class="common-button room-publish_button btn btn-success" onclick="publish();">
+                    <input type="button" value="メモ" class="common-button room-memo_button btn btn-light" onclick="memo();">
+                </div>
+
+                <div class="room-thread" onContextmenu="return false;">
+                        <ul class="list-group">
+                            <div id="thread">
+                            </div>
+                        </ul>
+                </div>
+
+                <div class="room-exit">
+                    <input type="button" value="退室する" class="common-button room-exit_button btn btn-danger" onclick="exit();">
+                </div>
+            </form>
+        </div>
+        <div>
+
+        </div>
     </div>
+
 </div>
 <div id="contextmenu">
     <ul>

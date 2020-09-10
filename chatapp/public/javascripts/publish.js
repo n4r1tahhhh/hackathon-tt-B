@@ -34,21 +34,21 @@ function removeMessage(messageId) {
 
 // サーバから受信した投稿メッセージを画面上に表示する (自分のメッセージ)
 socket.on('recieveMyMessageEvent', function (data) {
-    $('#thread').prepend('<pre class="text-success" id=' + data.id + '>' + data.userName + 'さん : ' + data.date + '\n' + data.message + '</pre>');
+    $('#thread').prepend('<li class="list-group-item"><pre class="text-success" id=' + data.id + '>' + data.userName + 'さん : ' + data.date + '\n' + data.message + '</pre></li>');
     setContextMenuEvent(data.id);
     console.log(data);
 });
 
 // サーバから受信した投稿メッセージを画面上に表示する (他の人のメッセージ)
 socket.on('recieveMessageEvent', function (data) {
-    $('#thread').prepend('<pre id=' + data.id + '>' + data.userName + 'さん : ' + data.date + '\n' + data.message + '</pre>');
+    $('#thread').prepend('<li class="list-group-item"><pre id=' + data.id + '>' + data.userName + 'さん : ' + data.date + '\n' + data.message + '</pre> </li>');
     console.log(data);
 });
 
 // サーバから受信した投稿メッセージを画面上に表示する (自分のメッセージ)
 socket.on('removeMyMessageEvent', function (messageId) {
     document.getElementById(messageId).innerHTML　= '<pre class="text-warning">メッセージを取り消しました。</pre>';
-}); 
+});
 
 // サーバから受信した投稿メッセージを画面上に表示する (他の人のメッセージ)
 socket.on('removeMessageEvent', function (messageId) {
@@ -57,7 +57,7 @@ socket.on('removeMessageEvent', function (messageId) {
 
 $(document).on("keypress", $("#message"), function(e) {
     // shift + Enterが押された
-    if (e.shiftKey && e.keyCode == 13) { 
+    if (e.shiftKey && e.keyCode == 13) {
         // 改行の入力を中断
         e.preventDefault();
         // 投稿
