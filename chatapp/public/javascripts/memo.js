@@ -15,7 +15,7 @@ function memo() {
         message = userName + 'さんのメモ : ' + getDate() + '\n' + message;
 
         // 改行を正しく表示
-        $('#thread').prepend('<pre>' + message + '</pre>');
+        $('#memo-thread').prepend('<pre>' + message + '</pre>');
     } else {
         alert('メモを入力してください！');
     }
