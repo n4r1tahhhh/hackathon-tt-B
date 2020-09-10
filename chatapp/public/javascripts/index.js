@@ -4,6 +4,8 @@
 function enter() {
     // 入力されたユーザ名を取得する
     const userName = $('#userName').val();
+    const userNameText = $('#userName').text();
+    console.log(userNameText);
 
     // ユーザ名が未入力でないかチェックする
     if (/\S/.test(userName)) {

@@ -2,6 +2,8 @@
 
 // 入力されたユーザ名を取得する
 var userName = $('#userName').val();
+var userNameText = $('#userName').text();
+console.log(userNameText);
 
 if (/\S/.test(userName)) {
     // 入室メッセージをサーバに送信する

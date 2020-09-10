@@ -1,8 +1,6 @@
 'use strict';
 
-let xssFilters = require('xss-filters');
-
-module.exports = function (socket, io) {
+module.exports = function (socket, io, xssFilters) {
     // 投稿メッセージを送信する
     socket.on('sendMessageEvent', function (data) {
         if (!data) {
