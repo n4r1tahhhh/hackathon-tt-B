@@ -9,6 +9,8 @@ module.exports = function (socket, io, xssFilters) {
 
         // 投稿に一意のidを付与する
         data["id"] = getUniqueStr();
+        // userNameのタグを無効化（XSS脆弱性の対策）
+        data["userName"] = xssFilters.inHTMLData(data["userName"]);
         // メッセージのタグを無効化（XSS脆弱性の対策）
         data["message"] = xssFilters.inHTMLData(data["message"]);
 

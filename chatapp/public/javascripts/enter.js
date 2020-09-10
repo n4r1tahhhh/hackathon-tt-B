@@ -1,9 +1,11 @@
 'use strict';
 
 // 入力されたユーザ名を取得する
-var userName = $('#userName').val();
-var userNameText = $('#userName').text();
-console.log(userNameText);
+let userName = $('#userName').val();
+// < という特殊文字を置換
+userName = userName.replace(/</g, "&lt;");
+// > という特殊文字を置換
+userName = userName.replace(/>/g, "&gt;");
 
 if (/\S/.test(userName)) {
     // 入室メッセージをサーバに送信する
