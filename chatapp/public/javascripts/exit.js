@@ -3,7 +3,11 @@
 // 退室メッセージをサーバに送信する
 function exit() {
     // ユーザ名取得
-    const userName = $('#userName').val();
+    let userName = $('#userName').val();
+    // < という特殊文字を置換
+    userName = userName.replace(/</g, "&lt;");
+    // > という特殊文字を置換
+    userName = userName.replace(/>/g, "&gt;");
     // 退室メッセージイベントを送信する
     socket.emit('exitMyselfEvent', userName);
     // 退室
@@ -12,5 +16,5 @@ function exit() {
 
 // サーバから受信した退室メッセージを画面上に表示する
 socket.on('exitOtherEvent', function (data) {
-    $('#thread').prepend('<p>' + data + 'さんが退室しました。' + '</p>');
+    $('#thread').prepend('<pre>' + data + 'さんが退室しました。' + '</pre>');
 });
