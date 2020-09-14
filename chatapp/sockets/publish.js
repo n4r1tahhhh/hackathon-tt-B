@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = function (socket, io, xssFilters) {
+module.exports = function (socket, io, xssFilters, marked) {
     // 投稿メッセージを送信する
     socket.on('sendMessageEvent', function (data) {
         if (!data) {
@@ -13,6 +13,8 @@ module.exports = function (socket, io, xssFilters) {
         data["userName"] = xssFilters.inHTMLData(data["userName"]);
         // メッセージのタグを無効化（XSS脆弱性の対策）
         data["message"] = xssFilters.inHTMLData(data["message"]);
+        // markdown化
+        data["message"] = marked(data["message"]);
 
         socket.broadcast.emit('recieveMessageEvent', data);
         socket.emit('recieveMyMessageEvent', data);
