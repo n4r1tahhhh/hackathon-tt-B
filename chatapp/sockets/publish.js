@@ -16,8 +16,8 @@ module.exports = function (socket, io, xssFilters, marked) {
         // markdown化
         data["message"] = marked(data["message"]);
 
-        socket.broadcast.emit('recieveMessageEvent', data);
-        socket.emit('recieveMyMessageEvent', data);
+        socket.broadcast.emit('receiveMessageEvent', data);
+        socket.emit('receiveMyMessageEvent', data);
     });
     // 投稿メッセージを取り消す
     socket.on('removeMessageEvent', function (messageId) {
@@ -26,6 +26,24 @@ module.exports = function (socket, io, xssFilters, marked) {
         }
         socket.broadcast.emit('removeMessageEvent', messageId);
         socket.emit('removeMyMessageEvent', messageId);
+    });
+    // 投稿メッセージに返信する
+    socket.on('replyMessageEvent', function (messageId, data) {
+        if (!messageId || !data) {
+            return
+        }
+
+        // 投稿に一意のidを付与する
+        data["id"] = getUniqueStr();
+        // userNameのタグを無効化（XSS脆弱性の対策）
+        data["userName"] = xssFilters.inHTMLData(data["userName"]);
+        // メッセージのタグを無効化（XSS脆弱性の対策）
+        data["message"] = xssFilters.inHTMLData(data["message"]);
+        // markdown化
+        data["message"] = marked(data["message"]);
+
+        socket.broadcast.emit('replyMessageEvent', messageId, data);
+        socket.emit('replyMyMessageEvent', messageId, data);
     });
 };
 

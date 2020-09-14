@@ -20,17 +20,17 @@
                 </div>
 
                 <div class="room-thread" onContextmenu="return false;">
-                            <div id="thread">
-                            </div>
+                    <div id="thread">
+                    </div>
                 </div>
 
                 <div class="room-exit">
                     <input type="button" value="退室する" class="common-button room-exit_button btn btn-danger" onclick="exit();">
                 </div>
                 
-                <div class="room-thread" onContextmenu="return false;">
-                            <div id="memo-thread">
-                            </div>
+                <div class="room-thread">
+                    <div id="memo-thread">
+                    </div>
                 </div>
             </form>
         </div>
@@ -40,11 +40,7 @@
     </div>
 
 </div>
-<div id="contextmenu">
-    <ul>
-        <li id="remove-message" onClick="removeMessage('');">投稿を取り消す</li>
-    </ul>
-</div>
+<div id="contextmenu"></div>
 
 <script src="../node_modules/xss-filters/dist/xss-filters.min.js"></script>
 <script src="../node_modules/highlight.js/lib/highlight.js"></script>
