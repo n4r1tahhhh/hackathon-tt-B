@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = function (socket, io, xssFilters, marked, hljs) {
-    // コードのハイライトがなぜか出来ない
+    // コードのハイライト
     marked = marked_js_render(marked, hljs);
     // 投稿メッセージを送信する
     socket.on('sendMessageEvent', function (data) {
@@ -13,8 +13,8 @@ module.exports = function (socket, io, xssFilters, marked, hljs) {
         data["id"] = getUniqueStr();
         // userNameのタグを無効化（XSS脆弱性の対策）
         data["userName"] = xssFilters.inHTMLData(data["userName"]);
-        // メッセージのタグを無効化（XSS脆弱性の対策）
-        data["message"] = xssFilters.inHTMLData(data["message"]);
+        // コード内ならそのまま、そうでないならメッセージのタグを無効化（XSS脆弱性の対策）
+        data["message"] = message_in_code(data["message"], xssFilters);
         // markdown化
         data["message"] = marked(data["message"]);
 
@@ -39,8 +39,8 @@ module.exports = function (socket, io, xssFilters, marked, hljs) {
         data["id"] = getUniqueStr();
         // userNameのタグを無効化（XSS脆弱性の対策）
         data["userName"] = xssFilters.inHTMLData(data["userName"]);
-        // メッセージのタグを無効化（XSS脆弱性の対策）
-        data["message"] = xssFilters.inHTMLData(data["message"]);
+        // コード内ならそのまま、そうでないならメッセージのタグを無効化（XSS脆弱性の対策）
+        data["message"] = message_in_code(data["message"], xssFilters);
         // markdown化
         data["message"] = marked(data["message"]);
 
@@ -52,6 +52,31 @@ module.exports = function (socket, io, xssFilters, marked, hljs) {
 // 一意の文字列取得
 function getUniqueStr(){
     return new Date().getTime().toString(16) + Math.floor(Math.random()).toString(16);
+}
+
+// コードの場合、xssFilterを不適応
+function message_in_code(message, xssFilters) {
+    let new_message = "";
+    let lines = message.split(/\r\n|\r|\n/);
+    var headline = [];
+    var in_code = false;
+    for (var it in lines) {
+        if (lines[it].match(/^```.?/)) {
+            // コードの行内の場合は外す
+            in_code = in_code ? in_code : !in_code;
+        } else if (lines[it].match(/^`.?/)) {
+            // コードの行内の場合は外す
+            in_code = in_code ? in_code : !in_code;
+        }
+        if (!in_code) {
+            // コードの中でない場合はxss脆弱性対策
+            headline.push(xssFilters.inHTMLData(lines[it]));
+            continue;
+        }
+        headline.push(lines[it]);
+    }
+    new_message = headline.join('\n');
+    return new_message;
 }
 
 // コードのハイライト
