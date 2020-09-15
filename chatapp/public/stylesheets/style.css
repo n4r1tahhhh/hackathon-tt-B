@@ -97,7 +97,12 @@ div {
     cursor: pointer;
 }
 
-.reply{
+.reply-message{
     margin-left: 50px;
+    margin-bottom: 0px;
+}
+
+.main-message{
+    margin-left: 0px;
     margin-bottom: 0px;
 }

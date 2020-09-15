@@ -20,10 +20,12 @@ if (/\S/.test(userName)) {
 
 // サーバから受信した入室メッセージを画面上に表示する (自クライアント用)
 socket.on('enterMyselfEvent', function (data) {
-    $('#thread').prepend('<pre class="text-success">' + data + 'さんが入室しました。' + '</pre>');
+    let $box = $('<div class="message-box"></div>').prependTo($('#thread'));
+    $box.append('<pre class="text-success">' + data + 'さんが入室しました。' + '</pre>');
 });
 
 // サーバから受信した入室メッセージを画面上に表示する (他のクライアント用)
 socket.on('enterOtherEvent', function (data) {
-    $('#thread').prepend('<pre>' + data + 'さんが入室しました。' + '</pre>');
+    let $box = $('<div class="message-box"></div>').prependTo($('#thread'));
+    $box.append('<pre>' + data + 'さんが入室しました。' + '</pre>');
 });

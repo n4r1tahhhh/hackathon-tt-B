@@ -43,39 +43,61 @@ function replyMessage(messageId) {
 
 // サーバから受信した投稿メッセージを画面上に表示する (自分のメッセージ)
 socket.on('receiveMyMessageEvent', function (data) {
-    $('#thread').prepend('<pre class="text-success" id=' + data.id + '>' + data.userName + 'さん : ' + data.date + '\n' + data.message + '</pre>');
+    const $box = $('<div class="message-box"></div>').prependTo($('#thread'));
+    const $mainBox = $('<div class="main-message"></div>').appendTo($box);
+    const $replyBox = $('<div class="reply-message"></div>').appendTo($box);
+
+    let $message = $('<pre id=' + data.id + ' class="text-success"></pre>').appendTo($mainBox);
+    $message.append('<p>' + data.userName + 'さん : ' + data.date + '</p>');
+    $message.append(data.message);
+
     setContextMenuEvent(data.id, "myMessage");
 });
 
 // サーバから受信した投稿メッセージを画面上に表示する (他の人のメッセージ)
 socket.on('receiveMessageEvent', function (data) {
-    $('#thread').prepend('<pre id=' + data.id + '>' + data.userName + 'さん : ' + data.date + '\n' + data.message + '</pre>');
+    const $box = $('<div class="message-box"></div>').prependTo($('#thread'));
+    const $mainBox = $('<div class="main-message"></div>').appendTo($box);
+    const $replyBox = $('<div class="reply-message"></div>').appendTo($box);
+
+    let $message = $('<pre id=' + data.id + '></pre>').appendTo($mainBox);
+    $message.append('<p>' + data.userName + 'さん : ' + data.date + '</p>');
+    $message.append(data.message);
+
     setContextMenuEvent(data.id, "otherMessage");
 });
 
 // メッセージを取り消す (自分のメッセージ)
 socket.on('removeMyMessageEvent', function (messageId) {
-    var $class = $('#' + messageId).attr("class") + " text-success";
-    $('#' + messageId).text('メッセージを取り消しました。');
-    $('#' + messageId).attr("class", $class);
+    $('#' + messageId).empty();
+    $('#' + messageId).append('<p>メッセージを取り消しました。</p>');
 });
 
 // メッセージを取り消す (他の人のメッセージ)
 socket.on('removeMessageEvent', function (messageId) {
-    var $class = $('#' + messageId).attr("class") + " text-warning";
-    $('#' + messageId).text('このメッセージは取り消されました。');
-    $('#' + messageId).attr("class", $class);
+    $('#' + messageId).empty();
+    $('#' + messageId).append('<p>メッセージを取り消しました。</p>');
 });
 
 // サーバから受信したリプライメッセージを画面上に表示する (自分のメッセージ)
 socket.on('replyMyMessageEvent', function (messageId, data) {
-    $('#' + messageId).after('<pre class="reply text-success" id=' + data.id + '>' + data.userName + 'さん : ' + data.date + '\n' + data.message + '</pre>');
+    let $replyBox = $('#' + messageId).parent().parent().children('.reply-message');
+
+    let $message = $('<pre id=' + data.id + ' class="text-success"></pre>').appendTo($replyBox);
+    $message.append('<p>' + data.userName + 'さん : ' + data.date + '</p>');
+    $message.append(data.message);
+
     setContextMenuEvent(data.id, "myMessage");
 });
 
 // サーバから受信したリプライメッセージを画面上に表示する (他の人のメッセージ)
 socket.on('replyMessageEvent', function (messageId, data) {
-    $('#' + messageId).after('<pre class="reply" id=' + data.id + '>' + data.userName + 'さん : ' + data.date + '\n' + data.message + '</pre>');
+    let $replyBox = $('#' + messageId).parent().parent().children('.reply-message');
+
+    let $message = $('<pre id=' + data.id + '></pre>').appendTo($replyBox);
+    $message.append('<p>' + data.userName + 'さん : ' + data.date + '</p>');
+    $message.append(data.message);
+
     setContextMenuEvent(data.id, "otherMessage");
 });
 
