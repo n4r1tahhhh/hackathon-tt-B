@@ -1,6 +1,8 @@
 'use strict';
 
-module.exports = function (socket, io, xssFilters, marked) {
+module.exports = function (socket, io, xssFilters, marked, hljs) {
+    // コードのハイライトがなぜか出来ない
+    marked = marked_js_render(marked, hljs);
     // 投稿メッセージを送信する
     socket.on('sendMessageEvent', function (data) {
         if (!data) {
@@ -50,4 +52,30 @@ module.exports = function (socket, io, xssFilters, marked) {
 // 一意の文字列取得
 function getUniqueStr(){
     return new Date().getTime().toString(16) + Math.floor(Math.random()).toString(16);
+}
+
+// コードのハイライト
+function marked_js_render(marked, hljs) {
+    // marked.js + highlight.js
+    var renderer = new marked.Renderer()
+
+    // code syntax hilightの編集
+    renderer.code = function (code, language) {
+        return '<pre><code class="hljs">' + hljs.highlightAuto(code).value + '</code></pre>';
+    };
+    // tableタグ
+    renderer.table = function (header, body) {
+        if (body) body = '<tbody>' + body + '</tbody>';
+
+        return '<table class="table table-hover">\n'
+            + '<thead>\n'
+            + header
+            + '</thead>\n'
+            + body
+            + '</table>\n';
+    };
+    marked.setOptions({
+        renderer: renderer,
+    });
+    return marked;
 }
