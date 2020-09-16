@@ -13,6 +13,7 @@ function enter() {
     }
 
     // ログイン処理へ
+    $('form').attr('action', '/room');
     $('form').submit();
 }
 
@@ -29,8 +30,8 @@ function signup() {
     }
 
     // 新規登録申請
+    $('form').attr('action', '/signup');
     $('form').submit();
-
 }
 
 $(document).on("keypress", $("#userName"), function(e) {
