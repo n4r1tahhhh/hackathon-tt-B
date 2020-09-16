@@ -47,9 +47,9 @@ socket.on('receiveMyMessageEvent', function (data) {
     const $mainBox = $('<div class="main-message"></div>').appendTo($box);
     const $replyBox = $('<div class="reply-message"></div>').appendTo($box);
 
-    let $message = $('<pre id=' + data.id + ' class="text-success"></pre>').appendTo($mainBox);
-    $message.append('<p>' + data.userName + 'さん : ' + data.date + '</p>');
-    $message.append(data.message);
+    let $message = $('<div id=' + data.id + '></div>').appendTo($mainBox);
+    $message.append('<pre class="text-success">' + data.userName + 'さん : ' + data.date + '</pre>');
+    $message.append('<pre class="text-success">' + $(data.message).text() + '</pre>');
 
     setContextMenuEvent(data.id, "myMessage");
 });
@@ -60,9 +60,9 @@ socket.on('receiveMessageEvent', function (data) {
     const $mainBox = $('<div class="main-message"></div>').appendTo($box);
     const $replyBox = $('<div class="reply-message"></div>').appendTo($box);
 
-    let $message = $('<pre id=' + data.id + '></pre>').appendTo($mainBox);
-    $message.append('<p>' + data.userName + 'さん : ' + data.date + '</p>');
-    $message.append(data.message);
+    let $message = $('<div id=' + data.id + '></div>').appendTo($mainBox);
+    $message.append('<pre>' + data.userName + 'さん : ' + data.date + '</pre>');
+    $message.append('<pre>' + $(data.message).text() + '</pre>');
 
     setContextMenuEvent(data.id, "otherMessage");
 });
@@ -70,22 +70,22 @@ socket.on('receiveMessageEvent', function (data) {
 // メッセージを取り消す (自分のメッセージ)
 socket.on('removeMyMessageEvent', function (messageId) {
     $('#' + messageId).empty();
-    $('#' + messageId).append('<p>メッセージを取り消しました。</p>');
+    $('#' + messageId).append('<pre class="text-warning">メッセージを取り消しました。</pre>');
 });
 
 // メッセージを取り消す (他の人のメッセージ)
 socket.on('removeMessageEvent', function (messageId) {
     $('#' + messageId).empty();
-    $('#' + messageId).append('<p>メッセージを取り消しました。</p>');
+    $('#' + messageId).append('<pre class="text-warning">このメッセージは取り消されました。</pre>');
 });
 
 // サーバから受信したリプライメッセージを画面上に表示する (自分のメッセージ)
 socket.on('replyMyMessageEvent', function (messageId, data) {
     let $replyBox = $('#' + messageId).parent().parent().children('.reply-message');
 
-    let $message = $('<pre id=' + data.id + ' class="text-success"></pre>').appendTo($replyBox);
-    $message.append('<p>' + data.userName + 'さん : ' + data.date + '</p>');
-    $message.append(data.message);
+    let $message = $('<div id=' + data.id + '></div>').appendTo($replyBox);
+    $message.append('<pre class="text-success">' + data.userName + 'さん : ' + data.date + '</pre>');
+    $message.append('<pre class="text-success">' + $(data.message).text() + '</pre>');
 
     setContextMenuEvent(data.id, "myMessage");
 });
@@ -94,9 +94,9 @@ socket.on('replyMyMessageEvent', function (messageId, data) {
 socket.on('replyMessageEvent', function (messageId, data) {
     let $replyBox = $('#' + messageId).parent().parent().children('.reply-message');
 
-    let $message = $('<pre id=' + data.id + '></pre>').appendTo($replyBox);
-    $message.append('<p>' + data.userName + 'さん : ' + data.date + '</p>');
-    $message.append(data.message);
+    let $message = $('<div id=' + data.id + '></div>').appendTo($replyBox);
+    $message.append('<pre>' + data.userName + 'さん : ' + data.date + '</pre>');
+    $message.append('<pre>' + $(data.message).text() + '</pre>');
 
     setContextMenuEvent(data.id, "otherMessage");
 });
@@ -121,9 +121,12 @@ function setContextMenuEvent(messageId, func) {
         $('#contextmenu').empty();
         $('#contextmenu').prepend('<ul></ul>');
 
+        // 返信機能を追加
+        $('#contextmenu').children('ul').append('<li id="reply-message">投稿に返信する</li>');
+        $('#reply-message').attr("onclick", "replyMessage('" + messageId + "');");
+
         // 自分のメッセージ専用のメニュー
         if (func === "myMessage") {
-
             // 取り消し機能を追加
             $('#contextmenu').children('ul').append('<li id="remove-message">投稿を取り消す</li>');
             $('#remove-message').attr("onclick", "removeMessage('" + messageId + "');");
@@ -131,11 +134,7 @@ function setContextMenuEvent(messageId, func) {
 
         // 他の人のメッセージ専用のメニュー
         else if (func === "otherMessage") {
-        }        
-        
-        // 返信機能を追加
-        $('#contextmenu').children('ul').append('<li id="reply-message">投稿に返信する</li>');
-        $('#reply-message').attr("onclick", "replyMessage('" + messageId + "');");
+        }
 
         // マウスの位置をstyleへ設定（左上の開始位置を指定）
         document.getElementById('contextmenu').style.left = e.pageX + "px";

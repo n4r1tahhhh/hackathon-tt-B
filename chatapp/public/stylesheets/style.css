@@ -82,27 +82,36 @@ div {
 
 }
 
-#contextmenu{
+#contextmenu {
     display: none;
     position: fixed;
     left: 0px;
     top: 0px;
     width: 200px;
-    height: 40px;
+    height: 42px;
     border: 1px solid #000;
     background-color: #fff;
 }
 
-#contextmenu li{
+#contextmenu li {
     cursor: pointer;
 }
 
-.main-message{
+.main-message {
     margin-left: 0px;
     margin-bottom: 0px;
 }
 
-.reply-message{
+.reply-message {
     margin-left: 50px;
     margin-bottom: 0px;
+}
+
+.message-box {
+}
+
+.message-box pre {
+    margin-bottom: 0px;
+    padding-left: 10px;
+    border-left: 4px solid skyblue;
 }
