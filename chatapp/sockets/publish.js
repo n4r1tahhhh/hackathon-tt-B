@@ -15,6 +15,7 @@ module.exports = function (socket, io, xssFilters) {
         socket.broadcast.emit('recieveMessageEvent', data);
         socket.emit('recieveMyMessageEvent', data);
     });
+
     // 投稿メッセージを取り消す
     socket.on('removeMessageEvent', function (messageId) {
         if (!messageId) {
@@ -23,9 +24,25 @@ module.exports = function (socket, io, xssFilters) {
         socket.broadcast.emit('removeMessageEvent', messageId);
         socket.emit('removeMyMessageEvent', messageId);
     });
+
+    // 特定のユーザにメッセージを送信
+    socket.on('sendMessageToIndividual', function (data) {
+        if (!data) {
+            return
+        }
+        var targetUserId = '';
+        for (int i = 0; i < userList.length; i++) {
+            if (userList[i].userName == data.targetUserName) {
+                targetUserId = userList[i].
+            }
+        }
+        const targetUserId = userList[]
+        socket.broadcast.to(socket.id).emit('recieveMyMessageEvent', data);
+    });
 };
 
 // 一意の文字列取得
 function getUniqueStr(){
     return new Date().getTime().toString(16) + Math.floor(Math.random()).toString(16);
 }
+
