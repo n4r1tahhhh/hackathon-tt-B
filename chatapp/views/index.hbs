@@ -4,12 +4,19 @@
     </div>
     <div class="row">
         <form method="post" action="/room">
-            <div class="index-user_name">
-                ユーザ名
-                <input type="text" id="userName" name="userName" class="index-user_name_text">
+            <div class="form-group">
+                <label for="InputTitle">ユーザ名</label>
+                <input type="text" id="userName" name="userName" class="form-control">
             </div>
-            <div class="index-enter">
+            <div class="form-group">
+                <label for="InputTitle">パスワード</label>
+                <input type="password" id="password" name="password" class="form-control">
+            </div>
+            <div class="index-enter float-left mr-2">
                 <input type="button" value="入室する" class="common-button index-enter_button btn btn-success" onclick="enter();">
+            </div>
+            <div class="index-signup float-left">
+                <input type="button" value="新規登録" class="common-button index-enter_button btn btn-primary" onclick="signup();">
             </div>
         </form>
     </div>

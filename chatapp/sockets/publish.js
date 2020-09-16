@@ -18,6 +18,10 @@ module.exports = function (socket, io, xssFilters, marked, hljs) {
         // markdown化
         data["message"] = marked(data["message"]);
 
+        // (未実装) dbに投稿を保存
+        // 
+        // 
+
         socket.broadcast.emit('receiveMessageEvent', data);
         socket.emit('receiveMyMessageEvent', data);
     });
@@ -26,6 +30,11 @@ module.exports = function (socket, io, xssFilters, marked, hljs) {
         if (!messageId) {
             return
         }
+
+        // (未実装) dbから投稿を削除(or取り消しメッセージに変更)
+        // 
+        // 
+
         socket.broadcast.emit('removeMessageEvent', messageId);
         socket.emit('removeMyMessageEvent', messageId);
     });
@@ -43,6 +52,10 @@ module.exports = function (socket, io, xssFilters, marked, hljs) {
         data["message"] = message_in_code(data["message"], xssFilters);
         // markdown化
         data["message"] = marked(data["message"]);
+
+        // (未実装) dbにリプライを保存
+        // 
+        // 
 
         socket.broadcast.emit('replyMessageEvent', messageId, data);
         socket.emit('replyMyMessageEvent', messageId, data);

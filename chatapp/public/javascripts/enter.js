@@ -20,6 +20,11 @@ if (/\S/.test(userName)) {
 
 // サーバから受信した入室メッセージを画面上に表示する (自クライアント用)
 socket.on('enterMyselfEvent', function (data) {
+
+    // (未実装) 過去○○分のチャット履歴を表示
+    // 
+    // 
+
     let $box = $('<div class="message-box"></div>').prependTo($('#thread'));
     $box.append('<pre class="text-success">' + data + 'さんが入室しました。' + '</pre>');
 });

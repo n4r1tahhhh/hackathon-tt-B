@@ -6,14 +6,14 @@ function enter() {
     const userName = $('#userName').val();
 
     // ユーザ名が未入力でないかチェックする
-    if (/\S/.test(userName)) {
-        $('form').submit();
-    } else {
+    if (/\S/.test(userName) === false) {
         window.alert('名前を入力してください。');
         $('#userName').val('');
         return;
     }
 
+    // ログイン処理へ
+    $('form').submit();
 }
 
 var $userName = $("#userName");
@@ -26,3 +26,20 @@ $(document).on("keypress", $userName, function(e) {
         e.preventDefault();
     }
 });
+
+// 新規登録
+function signup() {
+    // 入力されたユーザ名を取得する
+    const userName = $('#userName').val();
+
+    // ユーザ名が未入力でないかチェックする
+    if (/\S/.test(userName) === false) {
+        window.alert('名前を入力してください。');
+        $('#userName').val('');
+        return;
+    }
+
+    // 新規登録申請
+    $('form').submit();
+
+}
