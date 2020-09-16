@@ -16,17 +16,6 @@ function enter() {
     $('form').submit();
 }
 
-var $userName = $("#userName");
-
-$(document).on("keypress", $userName, function(e) {
-    // Enterが押された
-    if (e.keyCode == 13) {
-        enter();
-        // submitを中断
-        e.preventDefault();
-    }
-});
-
 // 新規登録
 function signup() {
     // 入力されたユーザ名を取得する
@@ -43,3 +32,12 @@ function signup() {
     $('form').submit();
 
 }
+
+$(document).on("keypress", $("#userName"), function(e) {
+    // Enterが押された
+    if (e.keyCode == 13) {
+        enter();
+        // submitを中断
+        e.preventDefault();
+    }
+});
