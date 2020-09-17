@@ -207,5 +207,11 @@ h1:after {
 .message-box pre {
     margin-bottom: 0px;
     padding-left: 10px;
+    width: 500px;
     border-left: 4px solid skyblue;
+}
+
+#thread {
+    height: 220px;
+    overflow-y: scroll;
 }
