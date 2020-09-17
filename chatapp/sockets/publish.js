@@ -47,9 +47,6 @@ module.exports = function (socket, io, xssFilters, marked, hljs) {
             });
         });
 
-        console.log(data['sendDM']);
-        console.log(userList);
-
         if (data['sendDM']) {
             var targetUserId = '';
             var senderUserId = '';
@@ -66,13 +63,13 @@ module.exports = function (socket, io, xssFilters, marked, hljs) {
             }
             if (targetUserId && senderUserId) {
                 // 個人に向けてDM
-                socket.broadcast.to(senderUserId).emit('receiveMyMessageEvent', data);
+                socket.emit('receiveMyMessageEvent', data);
                 socket.broadcast.to(targetUserId).emit('receiveMessageEvent', data);
             }
 
         } else {
             // 全員にむけて送信
-            socket.broadcast.emit('receiveMyMessageEvent', data);
+            socket.emit('receiveMyMessageEvent', data);
             socket.broadcast.emit('receiveMessageEvent', data);
         }
     });
