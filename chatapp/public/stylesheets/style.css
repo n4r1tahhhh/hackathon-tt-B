@@ -212,6 +212,6 @@ h1:after {
 }
 
 #thread {
-    height: 220px;
+    height: 200px;
     overflow-y: scroll;
 }
