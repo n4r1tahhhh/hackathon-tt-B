@@ -51,18 +51,29 @@ module.exports = function (socket, io, xssFilters, marked, hljs) {
         console.log(userList);
 
         if (data['sendDM']) {
+            var targetUserId = '';
+            var senderUserId = '';
+
             for (var i = 0; i < userList.length; i++) {
                 // userNameが一致する人のsocketidの人に向けてメッセージ送信
                 if (data['targetUserName'] == userList[i]['userName']) {
-                    const targetUserId = userList[i]['socketId'];
-                    socket.broadcast.to(targetUserId).emit('receiveMessageEvent', data);
-                    break;
+                    targetUserId = userList[i]['socketId'];
+                } else {
+                    if (data['userName'] == userList[i]['userName']) {
+                        senderUserId = userList[i]['socketId'];
+                    }
                 }
             }
+            if (targetUserId && senderUserId) {
+                // 個人に向けてDM
+                socket.broadcast.to(senderUserId).emit('receiveMyMessageEvent', data);
+                socket.broadcast.to(targetUserId).emit('receiveMessageEvent', data);
+            }
+
         } else {
-            console.log('aaaa');
+            // 全員にむけて送信
+            socket.broadcast.emit('receiveMyMessageEvent', data);
             socket.broadcast.emit('receiveMessageEvent', data);
-            socket.broadcast.emit('recieveMyMessageEvent', data);
         }
     });
 
