@@ -12,9 +12,20 @@ function exit() {
     socket.emit('exitMyselfEvent', userName);
     // 退室
     location.href = '/';
+
 }
 
 // サーバから受信した退室メッセージを画面上に表示する
 socket.on('exitOtherEvent', function (data) {
-    $('#thread').prepend('<pre>' + data + 'さんが退室しました。' + '</pre>');
+    let $box = $('<div class="message-box"></div>').prependTo($('#thread'));
+    $box.append('<pre class="text-success">' + data['userName'] + 'さんが退室しました。' + '</pre>');
+
+    // 接続中のユーザを画面上に表示
+    const userNameList = data['userNameList'];
+    document.getElementById("userNameList").innerHTML = '';
+    for (let i = 0; i < userNameList.length; i++ ) {
+        if (userNameList[i] != userName) {
+            document.getElementById("userNameList").innerHTML += '<option value="' + userNameList[i] + '">' + userNameList[i] + '</option>';
+        }
+    }
 });

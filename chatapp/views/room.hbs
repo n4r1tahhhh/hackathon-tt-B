@@ -6,6 +6,12 @@
             ログインユーザ：{{userName}}さん
             <input id="userName" type="hidden" value="{{userName}}">
         </div>
+
+        <input type="checkbox" id="sendDM" name="sendDM">
+        <label for="sendDM">DM送信</label><br>
+        <a>宛先：</a>
+        <select id="userNameList">
+        </select>
     </div>
 
     <div id='chat_container'>
@@ -15,38 +21,27 @@
                     <textarea id="message" rows="4" class="room-message_textarea" placeholder="投稿文を入力してください"></textarea>
                 </div>
                 <div class="room-submit">
-                    <input type="button" value="投稿" class="common-button room-publish_button btn btn-success" onclick="publish();">
-                    <input type="button" value="メモ" class="common-button room-memo_button btn btn-light" onclick="memo();">
+                    <input type="button" value="投稿" class="common-button room-publish_button btn btn-success" onclick="publish();" id="publishButton">
+                    <input type="button" value="メモ" class="common-button room-memo_button btn btn-light mr-5" onclick="memo();">
+                    <input type="button" value="退室" class="common-button room-exit_button btn btn-danger float-right" onclick="exit();">
                 </div>
 
                 <div class="room-thread" onContextmenu="return false;">
-                            <div id="thread">
-                            </div>
+                    <div id="thread">
+                    </div>
                 </div>
 
-                <div class="room-exit">
-                    <input type="button" value="退室する" class="common-button room-exit_button btn btn-danger" onclick="exit();">
-                </div>
-                
-                <div class="room-thread" onContextmenu="return false;">
-                            <div id="memo-thread">
-                            </div>
+                <div class="room-thread">
+                    <div id="memo-thread">
+                    </div>
                 </div>
             </form>
-        </div>
-        <div>
-
         </div>
     </div>
 
 </div>
-<div id="contextmenu">
-    <ul>
-        <li id="remove-message" onClick="removeMessage('');">投稿を取り消す</li>
-    </ul>
-</div>
+<div id="contextmenu"></div>
 
-<script src="../node_modules/xss-filters/dist/xss-filters.min.js"></script>
 <script src="/javascripts/socket.js"></script>
 <script src="/javascripts/enter.js"></script>
 <script src="/javascripts/time.js"></script>
