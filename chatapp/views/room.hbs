@@ -1,3 +1,4 @@
+<!doctype html>
 <div class="container">
     <div id='top_container'>
         <h1>Node Chat チャットルーム</h1>
@@ -5,6 +6,11 @@
             ログインユーザ：{{userName}}さん
             <input id="userName" type="hidden" value="{{userName}}">
         </div>
+        <input type="checkbox" id="sendDM" name="sendDM">
+        <label for="sendDM">DM送信</label><br>
+        <a>宛先：</a>
+        <select id="userNameList">
+        </select>
     </div>
 
     <div id='chat_container'>
@@ -19,26 +25,24 @@
                 </div>
 
                 <div class="room-thread" onContextmenu="return false;">
-                            <div id="thread">
-                            </div>
+                    <div id="thread">
+                    </div>
                 </div>
 
                 <div class="room-exit">
                     <input type="button" value="退室する" class="common-button room-exit_button btn btn-danger" onclick="exit();">
                 </div>
-            </form>
-        </div>
-        <div>
 
+                <div class="room-thread">
+                    <div id="memo-thread">
+                    </div>
+                </div>
+            </form>
         </div>
     </div>
 
 </div>
-<div id="contextmenu">
-    <ul>
-        <li id="remove-message" onClick="removeMessage('');">投稿を取り消す</li>
-    </ul>
-</div>
+<div id="contextmenu"></div>
 
 <script src="/javascripts/socket.js"></script>
 <script src="/javascripts/enter.js"></script>
