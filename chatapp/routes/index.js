@@ -11,10 +11,6 @@ router.get('/', function(request, response, next) {
 // 新規登録処理
 router.post('/signup', function(request, response, next) {
 
-    //データベース接続
-    const sqlite = require("sqlite3").verbose();
-    const db = new sqlite.Database("./data/Users.sqlite3");
-
     // 入力データ
     const userName = request.body.userName;
     const password = request.body.password;
@@ -23,8 +19,9 @@ router.post('/signup', function(request, response, next) {
     const bcrypt = require('bcrypt');
     const password_hash = bcrypt.hashSync(password, 10);
 
-    // ユーザーが存在するか
-    let userFound = false;
+    //データベース接続
+    const sqlite = require("sqlite3").verbose();
+    const db = new sqlite.Database("./data/Users.sqlite3");
 
     // ユーザー名が既に使われているか
     db.serialize(() => {
@@ -33,54 +30,55 @@ router.post('/signup', function(request, response, next) {
         db.run('CREATE TABLE IF NOT EXISTS user(id INTEGER, username TEXT NOT NULL, password TEXT NOT NULL, time DATETIME, PRIMARY KEY (id))');
 
         // ユーザー名で検索
-        //
-        //
+        db.get(`select * from user where username='${userName}'`, function (err, row) {
 
-        // ユーザーが存在した場合
-        if (false /* ユーザー名で検索 */) {
-            userFound = true;
-        }
-    });
-
-    // ユーザー名が既に使われている場合
-    if (userFound) {    
-        //flash('このユーザー名は既に使われています。'); 
-        db.close();    
-        response.render('index', { userName: request.body.userName });
-        return;
-    }
-    // ユーザー名がまだ使われていない場合
-    else {
-        db.serialize(() => {
-            // ユーザーの登録
-            // idを自動で割り当てる方法がわからない
-            // 日付も未実装
-            const data = db.prepare('INSERT INTO user VALUES (?, ?, ?, ?)');
-            // try {
-            //     data.run([1, userName, password_hash, "2020-09-01 00:00:00"]);
-            // } catch(e){
-            //     logErrors(e);
-            // }
-            data.finalize();
+            if (row !== undefined) {
+                db.close();
+                response.render('index', { 
+                    userName: request.body.userName,
+                    notification: 'このユーザー名は既に使われています。',
+                    notification_type: 'text-warning' 
+                });
+                return;
+            }
+            else {
+                // ユーザーの登録
+                // idを自動で割り当てる方法がわからない
+                // 日付も未実装
+                const data = db.prepare('INSERT INTO user VALUES (?, ?, ?, ?)');
+                try {
+                    data.run([1, userName, password_hash, "2020-09-01 00:00:00"]);
+                } catch(e){
+                    logErrors(e);
+                }
+                data.finalize();
+                db.close();
+                
+                // ログイン画面へ
+                response.render('index', { 
+                    userName: request.body.userName, 
+                    notification: '新規登録しました。',
+                    notification_type: 'text-success' 
+                });
+                return;
+            }
         });
-
-        db.close();
-
-        // ログイン画面へ
-        response.render('index', { 
-            userName: request.body.userName, 
-            notification: '新規登録しました。',
-            notification_type: 'text-success' 
-        });
-    }
+    });    
 });
 
 // チャット画面の表示
 router.post('/room', function(request, response, next) {
-    console.log('ユーザ名：' + request.body.userName);
+
+    // 入力データ
+    const userName = request.body.userName;
+    const password = request.body.password;
+
+    //データベース接続
+    const sqlite = require("sqlite3").verbose();
+    const db = new sqlite.Database("./data/Users.sqlite3");
 
     // 入力されたユーザー名とパスワードが合っているか
-    let correct = false;
+    let correct = false; 
 
     // (未実装) dbからユーザーを取得 (ユーザー名で検索)
     //const user_db;
