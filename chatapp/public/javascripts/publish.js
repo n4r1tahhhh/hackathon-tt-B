@@ -27,6 +27,14 @@ function removeMessage(messageId) {
     socket.emit('removeMessageEvent', messageId);
 }
 
+// 投稿ボタンを返信用に変更
+function changeButtonForReply(messageId) {
+    $('#publishButton').attr('onclick', `replyMessage('${messageId}');`);
+    $('#publishButton').attr('value', '返信');
+    $('#publishButton').removeClass('btn-success');
+    $('#publishButton').addClass('btn-primary');
+}
+
 // メッセージに返信する
 function replyMessage(messageId) {
     // ユーザ名を取得
@@ -39,6 +47,11 @@ function replyMessage(messageId) {
     socket.emit('replyMessageEvent', messageId, {message: message, userName: userName, date: date});
     // 投稿内容を空に
     $('#message').val('');
+    // 投稿ボタンを投稿用に変更
+    $('#publishButton').attr('onclick', 'publish();');
+    $('#publishButton').attr('value', '投稿');
+    $('#publishButton').removeClass('btn-primary');
+    $('#publishButton').addClass('btn-success');
 }
 
 // サーバから受信した投稿メッセージを画面上に表示する (自分のメッセージ)
@@ -106,8 +119,9 @@ $(document).on("keypress", $("#message"), function(e) {
     if (e.shiftKey && e.keyCode == 13) { 
         // 改行の入力を中断
         e.preventDefault();
-        // 投稿
-        publish($("#message"));
+        // ボタンクリックイベントを呼び出す
+        $('#publishButton').trigger("click");
+        //publish($("#message"));
     }
 });
 
@@ -123,7 +137,7 @@ function setContextMenuEvent(messageId, func) {
 
         // 返信機能を追加
         $('#contextmenu').children('ul').append('<li id="reply-message">投稿に返信する</li>');
-        $('#reply-message').attr("onclick", "replyMessage('" + messageId + "');");
+        $('#reply-message').attr("onclick", "changeButtonForReply('" + messageId + "');");
 
         // 自分のメッセージ専用のメニュー
         if (func === "myMessage") {
