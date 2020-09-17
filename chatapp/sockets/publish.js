@@ -22,18 +22,47 @@ module.exports = function (socket, io, xssFilters, marked, hljs) {
         // markdown化
         data["message"] = marked(data["message"]);
 
-        socket.emit('receiveMyMessageEvent', data);
+        // (未実装) dbに投稿を保存
+        const sqlite = require("sqlite3").verbose();
+        const db = new sqlite.Database('./data/Users.sqlite3');
+        db.serialize(() => {
+            //テーブルがなれけば「chat」を作成
+            db.run('CREATE TABLE IF NOT EXISTS chat(id INTEGER NOT NULL, username TEXT NOT NULL, type TEXT, message TEXT, replyid INTEGER, time DATETIME, PRIMARY KEY (id))');
+
+            db.get(`select * from user where username='${data["userName"]}'`, function (err, row) {
+                if (row !== undefined) {
+                    db.close();
+                    console.log("ユーザ名が違います！！");
+                } else {
+                    const dat = db.prepare('INSERT INTO chat VALUES (?, ?, ?, ?, ?, ?)');
+                    try {
+                        dat.run([Number(data["id"]), data["userName"], "message", data["message"], 0, "2020-09-01 00:00:00"]);
+                    } catch (e) {
+                        console.log(e);
+                        console.log("投稿失敗");
+                    }
+                    dat.finalize();
+                    db.close();
+                }
+            });
+        });
+
+        console.log(data['sendDM']);
+        console.log(userList);
 
         if (data['sendDM']) {
             for (var i = 0; i < userList.length; i++) {
                 // userNameが一致する人のsocketidの人に向けてメッセージ送信
-                if (data['userName'] == userList[i]['userName']) {
+                if (data['targetUserName'] == userList[i]['userName']) {
                     const targetUserId = userList[i]['socketId'];
-                    socket.broadcast.to(targetUserId).emit('recieveMyMessageEvent', data);
+                    socket.broadcast.to(targetUserId).emit('receiveMessageEvent', data);
+                    break;
                 }
             }
         } else {
+            console.log('aaaa');
             socket.broadcast.emit('receiveMessageEvent', data);
+            socket.broadcast.emit('recieveMyMessageEvent', data);
         }
     });
 
@@ -42,6 +71,32 @@ module.exports = function (socket, io, xssFilters, marked, hljs) {
         if (!messageId) {
             return
         }
+
+        // (未実装) dbから投稿を削除(or取り消しメッセージに変更)
+        const sqlite = require("sqlite3").verbose();
+        const db = new sqlite.Database('./data/Users.sqlite3');
+        db.serialize(() => {
+            //テーブルがなれけば「chat」を作成
+            db.run('CREATE TABLE IF NOT EXISTS chat(id INTEGER NOT NULL, username TEXT NOT NULL, type TEXT, message TEXT, replyid INTEGER, time DATETIME, PRIMARY KEY (id))');
+
+            db.get(`select * from user where id='${Number(messageId)})'`, function (err, row) {
+                if (row !== undefined) {
+                    db.close();
+                    console.log("IDが違います！！");
+                } else {
+                    const dat = db.prepare('UPDATE chat SET type = ? WHERE id = ?');
+                    try {
+                        dat.run(["delete", Number(messageId)]);
+                    } catch (e) {
+                        console.log(e);
+                        console.log("投稿取り消し失敗");
+                    }
+                    dat.finalize();
+                    db.close();
+                }
+            });
+        });
+
         socket.broadcast.emit('removeMessageEvent', messageId);
         socket.emit('removeMyMessageEvent', messageId);
     });
@@ -75,6 +130,31 @@ module.exports = function (socket, io, xssFilters, marked, hljs) {
         data["message"] = message_in_code(data["message"], xssFilters);
         // markdown化
         data["message"] = marked(data["message"]);
+
+        // (未実装) dbにリプライを保存
+        const sqlite = require("sqlite3").verbose();
+        const db = new sqlite.Database('./data/Users.sqlite3');
+        db.serialize(() => {
+            //テーブルがなれけば「chat」を作成
+            db.run('CREATE TABLE IF NOT EXISTS chat(id INTEGER NOT NULL, username TEXT NOT NULL, type TEXT, message TEXT, replyid INTEGER, time DATETIME, PRIMARY KEY (id))');
+
+            db.get(`select * from user where id='${Number(messageId)}'`, function (err, row) {
+                if (row !== undefined) {
+                    db.close();
+                    console.log("IDが違います！！");
+                } else {
+                    const dat = db.prepare('INSERT INTO chat VALUES (?, ?, ?, ?, ?, ?)');
+                    try {
+                        dat.run([Number(data["id"]), data["userName"], "reply", data["message"], messageId, "2020-09-01 00:00:00"]);
+                    } catch (e) {
+                        console.log(e);
+                        console.log("リプライ失敗");
+                    }
+                    dat.finalize();
+                    db.close();
+                }
+            });
+        });
 
         socket.broadcast.emit('replyMessageEvent', messageId, data);
         socket.emit('replyMyMessageEvent', messageId, data);
