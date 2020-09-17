@@ -25,7 +25,7 @@ router.post('/signup', function(request, response, next) {
 
     // ユーザー名が既に使われているか
     db.serialize(() => {
-    
+
         // テーブルがなれけば「user」を作成
         db.run('CREATE TABLE IF NOT EXISTS user(username TEXT NOT NULL, password TEXT NOT NULL, time DATETIME, PRIMARY KEY (username))');
 
@@ -36,10 +36,10 @@ router.post('/signup', function(request, response, next) {
             if (row !== undefined) {
 
                 db.close();
-                response.render('index', { 
+                response.render('index', {
                     userName: request.body.userName,
                     notification: 'このユーザー名は既に使われています。',
-                    notification_type: 'text-warning' 
+                    notification_type: 'text-warning'
                 });
                 return;
             }
@@ -58,16 +58,16 @@ router.post('/signup', function(request, response, next) {
                 }
                 data.finalize();
                 db.close();
-                
-                response.render('index', { 
-                    userName: request.body.userName, 
+
+                response.render('index', {
+                    userName: request.body.userName,
                     notification: '新規登録しました。',
-                    notification_type: 'text-success' 
+                    notification_type: 'text-success'
                 });
                 return;
             }
         });
-    });    
+    });
 });
 
 // チャット画面の表示
@@ -102,13 +102,13 @@ router.post('/room', function(request, response, next) {
                 }
             }
 
-            response.render('index', { 
+            response.render('index', {
                 userName: request.body.userName,
                 notification: 'ユーザー名またはパスワードが異なります。',
-                notification_type: 'text-warning' 
+                notification_type: 'text-warning'
             });
         });
-    });    
+    });
 });
 
 module.exports = router;

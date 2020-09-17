@@ -1,8 +1,10 @@
 'use strict';
 
 module.exports = function (socket, xssFilters) {
+    console.log('ああああああああああ');
     // 退室メッセージをクライアントに送信する
     socket.on('exitMyselfEvent', function (data) {
+        console.log(data);
         data = xssFilters.inHTMLData(data);
 
         // 接続しているユーザのリストから消去
@@ -21,7 +23,7 @@ module.exports = function (socket, xssFilters) {
             userName: data,
             userNameList: userNameList
         }
-
+        console.log(data);
         socket.broadcast.emit('exitOtherEvent', data);
     });
 };

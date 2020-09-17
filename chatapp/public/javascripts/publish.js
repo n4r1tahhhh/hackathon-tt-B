@@ -71,7 +71,12 @@ socket.on('receiveMyMessageEvent', function (data) {
     const $replyBox = $('<div class="reply-message"></div>').appendTo($box);
 
     let $message = $('<div id=' + data.id + '></div>').appendTo($mainBox);
-    $message.append('<pre class="text-success">' + data.userName + 'さん : ' + data.date + '</pre>');
+
+    var showDM = '';
+    if (data.sendDM) {
+        showDM = 'DM：';
+    }
+    $message.append('<pre class="text-success">' + showDM + data.userName + 'さん : ' + data.date + '</pre>');
     // 簡易的にXSS脆弱性対策
     $message.append('<pre class="text-success">' + $(data.message).text().replace(/</g,'&lt;') + '</pre>');
     console.log($message);
@@ -86,7 +91,12 @@ socket.on('receiveMessageEvent', function (data) {
     const $replyBox = $('<div class="reply-message"></div>').appendTo($box);
 
     let $message = $('<div id=' + data.id + '></div>').appendTo($mainBox);
-    $message.append('<pre>' + data.userName + 'さん : ' + data.date + '</pre>');
+
+    var showDM = '';
+    if (data.sendDM) {
+        showDM = 'DM：';
+    }
+    $message.append('<pre>' + showDM + data.userName + 'さん : ' + data.date + '</pre>');
     // 簡易的にXSS脆弱性対策
     $message.append('<pre>' + $(data.message).text().replace(/</g, '%lt;') + '</pre>');
     console.log($message);
