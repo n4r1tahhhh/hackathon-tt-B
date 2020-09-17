@@ -19,8 +19,29 @@ module.exports = function (socket, io, xssFilters, marked, hljs) {
         data["message"] = marked(data["message"]);
 
         // (未実装) dbに投稿を保存
-        // 
-        // 
+        const sqlite = require("sqlite3").verbose();
+        const db = new sqlite.Database('./data/Users.sqlite3');
+        db.serialize(() => {
+            //テーブルがなれけば「chat」を作成
+            db.run('CREATE TABLE IF NOT EXISTS chat(id INTEGER NOT NULL, username TEXT NOT NULL, type TEXT, message TEXT, replyid INTEGER, time DATETIME, PRIMARY KEY (id))');
+
+            db.get(`select * from user where username='${data["userName"]}'`, function (err, row) {
+                if (row !== undefined) {
+                    db.close();
+                    console.log("ユーザ名が違います！！");
+                } else {
+                    const dat = db.prepare('INSERT INTO chat VALUES (?, ?, ?, ?, ?, ?)');
+                    try {
+                        dat.run([Number(data["id"]), data["userName"], "message", data["message"], 0, "2020-09-01 00:00:00"]);
+                    } catch (e) {
+                        console.log(e);
+                        console.log("投稿失敗");
+                    }
+                    dat.finalize();
+                    db.close();
+                }
+            });
+        });
 
         socket.broadcast.emit('receiveMessageEvent', data);
         socket.emit('receiveMyMessageEvent', data);
@@ -32,8 +53,29 @@ module.exports = function (socket, io, xssFilters, marked, hljs) {
         }
 
         // (未実装) dbから投稿を削除(or取り消しメッセージに変更)
-        // 
-        // 
+        const sqlite = require("sqlite3").verbose();
+        const db = new sqlite.Database('./data/Users.sqlite3');
+        db.serialize(() => {
+            //テーブルがなれけば「chat」を作成
+            db.run('CREATE TABLE IF NOT EXISTS chat(id INTEGER NOT NULL, username TEXT NOT NULL, type TEXT, message TEXT, replyid INTEGER, time DATETIME, PRIMARY KEY (id))');
+
+            db.get(`select * from user where id='${Number(messageId)})'`, function (err, row) {
+                if (row !== undefined) {
+                    db.close();
+                    console.log("IDが違います！！");
+                } else {
+                    const dat = db.prepare('UPDATE chat SET type = ? WHERE id = ?');
+                    try {
+                        dat.run(["delete", Number(messageId)]);
+                    } catch (e) {
+                        console.log(e);
+                        console.log("投稿取り消し失敗");
+                    }
+                    dat.finalize();
+                    db.close();
+                }
+            });
+        });
 
         socket.broadcast.emit('removeMessageEvent', messageId);
         socket.emit('removeMyMessageEvent', messageId);
@@ -54,8 +96,29 @@ module.exports = function (socket, io, xssFilters, marked, hljs) {
         data["message"] = marked(data["message"]);
 
         // (未実装) dbにリプライを保存
-        // 
-        // 
+        const sqlite = require("sqlite3").verbose();
+        const db = new sqlite.Database('./data/Users.sqlite3');
+        db.serialize(() => {
+            //テーブルがなれけば「chat」を作成
+            db.run('CREATE TABLE IF NOT EXISTS chat(id INTEGER NOT NULL, username TEXT NOT NULL, type TEXT, message TEXT, replyid INTEGER, time DATETIME, PRIMARY KEY (id))');
+
+            db.get(`select * from user where id='${Number(messageId)}'`, function (err, row) {
+                if (row !== undefined) {
+                    db.close();
+                    console.log("IDが違います！！");
+                } else {
+                    const dat = db.prepare('INSERT INTO chat VALUES (?, ?, ?, ?, ?, ?)');
+                    try {
+                        dat.run([Number(data["id"]), data["userName"], "reply", data["message"], messageId, "2020-09-01 00:00:00"]);
+                    } catch (e) {
+                        console.log(e);
+                        console.log("リプライ失敗");
+                    }
+                    dat.finalize();
+                    db.close();
+                }
+            });
+        });
 
         socket.broadcast.emit('replyMessageEvent', messageId, data);
         socket.emit('replyMyMessageEvent', messageId, data);
