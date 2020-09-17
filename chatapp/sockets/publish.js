@@ -13,6 +13,10 @@ module.exports = function (socket, io, xssFilters, marked, hljs) {
         data["id"] = getUniqueStr();
         // userNameのタグを無効化（XSS脆弱性の対策）
         data["userName"] = xssFilters.inHTMLData(data["userName"]);
+        // targetUserNameのタグを無効化（XSS脆弱性の対策）
+        data["targetUserName"] = xssFilters.inHTMLData(data["targetUserName"]);
+        // sendDMのタグを無効化（XSS脆弱性の対策）
+        data["sendDM"] = (xssFilters.inHTMLData(data["sendDM"]) === 'true');
         // コード内ならそのまま、そうでないならメッセージのタグを無効化（XSS脆弱性の対策）
         data["message"] = message_in_code(data["message"], xssFilters);
         // markdown化
@@ -43,9 +47,33 @@ module.exports = function (socket, io, xssFilters, marked, hljs) {
             });
         });
 
-        socket.broadcast.emit('receiveMessageEvent', data);
-        socket.emit('receiveMyMessageEvent', data);
+        if (data['sendDM']) {
+            var targetUserId = '';
+            var senderUserId = '';
+
+            for (var i = 0; i < userList.length; i++) {
+                // userNameが一致する人のsocketidの人に向けてメッセージ送信
+                if (data['targetUserName'] == userList[i]['userName']) {
+                    targetUserId = userList[i]['socketId'];
+                } else {
+                    if (data['userName'] == userList[i]['userName']) {
+                        senderUserId = userList[i]['socketId'];
+                    }
+                }
+            }
+            if (targetUserId && senderUserId) {
+                // 個人に向けてDM
+                socket.emit('receiveMyMessageEvent', data);
+                socket.broadcast.to(targetUserId).emit('receiveMessageEvent', data);
+            }
+
+        } else {
+            // 全員にむけて送信
+            socket.emit('receiveMyMessageEvent', data);
+            socket.broadcast.emit('receiveMessageEvent', data);
+        }
     });
+
     // 投稿メッセージを取り消す
     socket.on('removeMessageEvent', function (messageId) {
         if (!messageId) {
@@ -80,6 +108,22 @@ module.exports = function (socket, io, xssFilters, marked, hljs) {
         socket.broadcast.emit('removeMessageEvent', messageId);
         socket.emit('removeMyMessageEvent', messageId);
     });
+
+    // 特定のユーザにdmメッセージを送信
+    socket.on('sendMessageToIndividual', function (data) {
+        if (!data) {
+            return
+        }
+
+        for (var i = 0; i < userList.length; i++) {
+            // userNameが一致する人のsocketidの人に向けてメッセージ送信
+            if (data['userName'] == userList[i]['userName']) {
+                const targetId = userList[i]['socketId'];
+                socket.broadcast.to(targetUserId).emit('recieveMyMessageEvent', data);
+            }
+        }
+    });
+
     // 投稿メッセージに返信する
     socket.on('replyMessageEvent', function (messageId, data) {
         if (!messageId || !data) {
