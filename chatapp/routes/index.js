@@ -27,12 +27,14 @@ router.post('/signup', function(request, response, next) {
     db.serialize(() => {
     
         // テーブルがなれけば「user」を作成
-        db.run('CREATE TABLE IF NOT EXISTS user(id INTEGER, username TEXT NOT NULL, password TEXT NOT NULL, time DATETIME, PRIMARY KEY (id))');
+        db.run('CREATE TABLE IF NOT EXISTS user(username TEXT NOT NULL, password TEXT NOT NULL, time DATETIME, PRIMARY KEY (username))');
 
         // ユーザー名で検索
         db.get(`select * from user where username='${userName}'`, function (err, row) {
 
+            // ユーザー名が既に使われている場合
             if (row !== undefined) {
+
                 db.close();
                 response.render('index', { 
                     userName: request.body.userName,
@@ -41,20 +43,22 @@ router.post('/signup', function(request, response, next) {
                 });
                 return;
             }
+            // ユーザー名がまだ使われていない場合
             else {
-                // ユーザーの登録
-                // idを自動で割り当てる方法がわからない
-                // 日付も未実装
-                const data = db.prepare('INSERT INTO user VALUES (?, ?, ?, ?)');
+
+                // 日付の取得
+                var date = new Date();
+                var sqliteDate = date.toISOString();
+
+                const data = db.prepare('INSERT INTO user VALUES (?, ?, ?)');
                 try {
-                    data.run([1, userName, password_hash, "2020-09-01 00:00:00"]);
+                    data.run([userName, password_hash, sqliteDate]);
                 } catch(e){
                     logErrors(e);
                 }
                 data.finalize();
                 db.close();
                 
-                // ログイン画面へ
                 response.render('index', { 
                     userName: request.body.userName, 
                     notification: '新規登録しました。',
@@ -77,40 +81,34 @@ router.post('/room', function(request, response, next) {
     const sqlite = require("sqlite3").verbose();
     const db = new sqlite.Database("./data/Users.sqlite3");
 
-    // 入力されたユーザー名とパスワードが合っているか
-    let correct = false; 
+    // ユーザー名が既に使われているか
+    db.serialize(() => {
 
-    // (未実装) dbからユーザーを取得 (ユーザー名で検索)
-    //const user_db;
+        // ユーザー名で検索
+        db.get(`select password from user where username='${userName}'`, function (err, row) {
 
-    // (未実装) dbに指定されたユーザーが存在するか
-    if (true /* user_db !== None */) {
+            db.close();
 
-        // 入力されたパスワード
-        const password = request.body.password;
+            // ユーザーがdbに存在するか
+            if (row !== undefined) {
 
-        // (未実装) dbからユーザーのパスワードを取得
-        //const password_db;
+                const password_db = row.password;
 
-        // (未実装) dbのハッシュパスワードと一致するか
-        const bcrypt = require('bcrypt');
-        if (true /* bcrypt.compareSync(password, password_db) */) {
-            correct = true;
-        }
-    }
+                // パスワードのハッシュ値がdbに保存してあるハッシュ値と同じであれば入室
+                const bcrypt = require('bcrypt');
+                if (bcrypt.compareSync(password, password_db)) {
+                    response.render('room', { userName: request.body.userName });
+                    return;
+                }
+            }
 
-    // ユーザー名とパスワードが合っている場合入室
-    if (correct) {        
-        response.render('room', { userName: request.body.userName });
-    }
-    // ユーザー名またはパスワードが間違っている場合
-    else {
-        response.render('index', { 
-            userName: request.body.userName, 
-            notification: 'ユーザー名またはパスワードが正しくありません。', 
-            notification_type: 'text-danger' 
+            response.render('index', { 
+                userName: request.body.userName,
+                notification: 'ユーザー名またはパスワードが異なります。',
+                notification_type: 'text-warning' 
+            });
         });
-    }
+    });    
 });
 
 module.exports = router;
