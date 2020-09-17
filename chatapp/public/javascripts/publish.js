@@ -4,14 +4,24 @@
 function publish() {
     // ユーザ名を取得
     const userName = $('#userName').val();
+
     // 入力されたメッセージを取得
     const message = $('#message').val();
+
+    const sendDM = document.getElementById('sendDM').checked;
+    console.log(sendDM);
+
+    // 送るユーザ名を取得
+    const targetUserName = $('#userNameList').val();
 
     if (/\S/.test(message)) {
         // 時間を追加
         const date = getDate();
         // 投稿内容を送信
-        socket.emit('sendMessageEvent', {message: message, userName: userName, date: date});
+        socket.emit(
+            'sendMessageEvent',
+            {message: message, userName: userName, sendDM: sendDM, targetUserName: targetUserName, date: date}
+        );
         // 投稿内容を空に
         $('#message').val('');
     }
@@ -116,7 +126,7 @@ socket.on('replyMessageEvent', function (messageId, data) {
 
 $(document).on("keypress", $("#message"), function(e) {
     // shift + Enterが押された
-    if (e.shiftKey && e.keyCode == 13) { 
+    if (e.shiftKey && e.keyCode == 13) {
         // 改行の入力を中断
         e.preventDefault();
         // ボタンクリックイベントを呼び出す
