@@ -62,7 +62,9 @@ socket.on('receiveMyMessageEvent', function (data) {
 
     let $message = $('<div id=' + data.id + '></div>').appendTo($mainBox);
     $message.append('<pre class="text-success">' + data.userName + 'さん : ' + data.date + '</pre>');
-    $message.append('<pre class="text-success">' + $(data.message).text() + '</pre>');
+    // 簡易的にXSS脆弱性対策
+    $message.append('<pre class="text-success">' + $(data.message).text().replace(/</g,'&lt;') + '</pre>');
+    console.log($message);
 
     setContextMenuEvent(data.id, "myMessage");
 });
@@ -75,7 +77,9 @@ socket.on('receiveMessageEvent', function (data) {
 
     let $message = $('<div id=' + data.id + '></div>').appendTo($mainBox);
     $message.append('<pre>' + data.userName + 'さん : ' + data.date + '</pre>');
-    $message.append('<pre>' + $(data.message).text() + '</pre>');
+    // 簡易的にXSS脆弱性対策
+    $message.append('<pre>' + $(data.message).text().replace(/</g, '%lt;') + '</pre>');
+    console.log($message);
 
     setContextMenuEvent(data.id, "otherMessage");
 });
@@ -98,7 +102,8 @@ socket.on('replyMyMessageEvent', function (messageId, data) {
 
     let $message = $('<div id=' + data.id + '></div>').appendTo($replyBox);
     $message.append('<pre class="text-success">' + data.userName + 'さん : ' + data.date + '</pre>');
-    $message.append('<pre class="text-success">' + $(data.message).text() + '</pre>');
+    // 簡易的にXSS脆弱性対策
+    $message.append('<pre class="text-success">' + $(data.message).text().replace(/</g, '&lt;') + '</pre>');
 
     setContextMenuEvent(data.id, "myMessage");
 });
@@ -109,7 +114,8 @@ socket.on('replyMessageEvent', function (messageId, data) {
 
     let $message = $('<div id=' + data.id + '></div>').appendTo($replyBox);
     $message.append('<pre>' + data.userName + 'さん : ' + data.date + '</pre>');
-    $message.append('<pre>' + $(data.message).text() + '</pre>');
+    // 簡易的にXSS脆弱性対策
+    $message.append('<pre>' + $(data.message).text().replace(/</g, '&lt;') + '</pre>');
 
     setContextMenuEvent(data.id, "otherMessage");
 });
