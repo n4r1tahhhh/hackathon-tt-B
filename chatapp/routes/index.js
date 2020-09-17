@@ -8,27 +8,96 @@ router.get('/', function(request, response, next) {
     response.render('index');
 });
 
+// 新規登録処理
+router.post('/signup', function(request, response, next) {
+
+    //データベース接続
+    const sqlite = require("sqlite3").verbose();
+    const db = new sqlite.Database("./data/Users.sqlite3");
+
+    // 入力データ
+    const userName = request.body.userName;
+    const password = request.body.password;
+
+    // ハッシュ化
+    const bcrypt = require('bcrypt');
+    const password_hash = bcrypt.hashSync(password, 10);
+
+    // ユーザーが存在するか
+    let userFound = false;
+
+    // ユーザー名が既に使われているか
+    db.serialize(() => {
+    
+        // テーブルがなれけば「user」を作成
+        db.run('CREATE TABLE IF NOT EXISTS user(id INTEGER, username TEXT NOT NULL, password TEXT NOT NULL, time DATETIME, PRIMARY KEY (id))');
+
+        // ユーザー名で検索
+        //
+        //
+
+        // ユーザーが存在した場合
+        if (false /* ユーザー名で検索 */) {
+            userFound = true;
+        }
+    });
+
+    // ユーザー名が既に使われている場合
+    if (userFound) {    
+        //flash('このユーザー名は既に使われています。'); 
+        db.close();    
+        response.render('index', { userName: request.body.userName });
+        return;
+    }
+    // ユーザー名がまだ使われていない場合
+    else {
+        db.serialize(() => {
+            // ユーザーの登録
+            // idを自動で割り当てる方法がわからない
+            // 日付も未実装
+            const data = db.prepare('INSERT INTO user VALUES (?, ?, ?, ?)');
+            // try {
+            //     data.run([1, userName, password_hash, "2020-09-01 00:00:00"]);
+            // } catch(e){
+            //     logErrors(e);
+            // }
+            data.finalize();
+        });
+
+        db.close();
+
+        // ログイン画面へ
+        response.render('index', { 
+            userName: request.body.userName, 
+            notification: '新規登録しました。',
+            notification_type: 'text-success' 
+        });
+    }
+});
+
 // チャット画面の表示
 router.post('/room', function(request, response, next) {
     console.log('ユーザ名：' + request.body.userName);
 
-    // (未実装) 入室処理
+    // 入力されたユーザー名とパスワードが合っているか
     let correct = false;
 
     // (未実装) dbからユーザーを取得 (ユーザー名で検索)
     //const user_db;
 
-    // dbに指定されたユーザーが存在するか
+    // (未実装) dbに指定されたユーザーが存在するか
     if (true /* user_db !== None */) {
 
-        // (未実装) パスワードハッシュ化
-        //const password_hash = request.body.password;
-        // (未実装) dbからパスワードを取得
+        // 入力されたパスワード
+        const password = request.body.password;
+
+        // (未実装) dbからユーザーのパスワードを取得
         //const password_db;
 
-        // dbのハッシュパスワードと一致するか
-        if (true /* password_hash === password_db */) {
-            correct  = true;
+        // (未実装) dbのハッシュパスワードと一致するか
+        const bcrypt = require('bcrypt');
+        if (true /* bcrypt.compareSync(password, password_db) */) {
+            correct = true;
         }
     }
 
@@ -36,27 +105,14 @@ router.post('/room', function(request, response, next) {
     if (correct) {        
         response.render('room', { userName: request.body.userName });
     }
-
-    // ユーザー名またはパスワードが間違っている
-    //flash('ユーザー名またはパスワードが正しくありません。');
-    response.render('index', { userName: request.body.userName });
-});
-
-// (未実装) 新規登録処理
-router.post('/signup', function(request, response, next) {
-
-    if (true /* ユーザー名が存在する -> true */) {    
-        //flash('このユーザー名は既に使われています。'); 
-        response.render('index', { userName: request.body.userName });
+    // ユーザー名またはパスワードが間違っている場合
+    else {
+        response.render('index', { 
+            userName: request.body.userName, 
+            notification: 'ユーザー名またはパスワードが正しくありません。', 
+            notification_type: 'text-danger' 
+        });
     }
-
-    // (未実装) パスワードハッシュ化
-    //const password_hash = request.body.password;
-    // (未実装) パスワードをハッシュ化してdbに保存
-    
-
-    // 入室
-    response.render('room', { userName: request.body.userName });
 });
 
 module.exports = router;
